@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>شحن Hiay Chat — صفحة الطلب</title>
+  <meta name="description" content="صفحة شحن لبرنامج Hiay Chat — أدخل آيدي الحساب، الكمية، وطريقة الدفع ثم أرسل الطلب عبر التليجرام.">
+  <style>
+    :root{--accent:#0b74ff;--bg:#f7f9fc}
+    *{box-sizing:border-box}
+    body{font-family:Tahoma,Arial,Helvetica,sans-serif;background:var(--bg);margin:0;padding:20px;color:#111}
+    .container{max-width:720px;margin:18px auto;background:#fff;border-radius:12px;box-shadow:0 6px 22px rgba(15,15,15,0.08);overflow:hidden}
+    header{padding:20px;border-bottom:1px solid #eee}
+    h1{margin:0;font-size:20px}
+    p.lead{margin:6px 0 0;color:#555}
+    form{padding:18px;display:grid;gap:12px}
+    label{font-size:14px;color:#333}
+    input[type=text], input[type=tel], textarea, select{width:100%;padding:10px;border:1px solid #e2e8f0;border-radius:8px;font-size:14px}
+    .row{display:flex;gap:10px}
+    .row > *{flex:1}
+    .small{font-size:13px;color:#666}
+    .btn{display:inline-block;background:var(--accent);color:#fff;padding:12px 16px;border-radius:10px;border:0;font-weight:600;cursor:pointer}
+    .btn.secondary{background:#2d2d2d}
+    footer{padding:14px;border-top:1px solid #f1f1f1;background:#fafafa;font-size:13px;color:#444}
+    .notice{background:#fffbeb;border:1px solid #fde68a;padding:10px;border-radius:8px;color:#7a4900}
+    .flex-between{display:flex;justify-content:space-between;align-items:center}
+    @media (max-width:520px){.row{flex-direction:column}}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>شحن Hiay Chat — طلب شحن كونزات</h1>
+      <p class="lead">ادخل بيانات الحساب والكمية وطريقة الدفع، وسيُرسل الطلب إلى تليجرام تلقائياً.</p>
+    </header>
+
+    <form id="orderForm">
+      <div>
+        <label for="app">التطبيق</label>
+        <input type="text" id="app" value="Hiay Chat" readonly>
+      </div>
+
+      <div>
+        <label for="accountId">آيدي الحساب (Hiay Chat)</label>
+        <input type="text" id="accountId" placeholder="أدخل آيدي الحساب أو اسم المستخدم" required>
+      </div>
+
+      <div class="row">
+        <div>
+          <label for="amount">عدد الكونزات (اكتب الرقم)</label>
+          <input type="text" id="amount" placeholder="مثال: 50000" inputmode="numeric" required>
+        </div>
+        <div>
+          <label for="currency">العملة (اختياري)</label>
+          <input type="text" id="currency" placeholder="IQD, USD, او اترك فارغ">
+        </div>
+      </div>
+
+      <div>
+        <label for="payment">طريقة الدفع</label>
+        <select id="payment">
+          <option value="تحويل بنكي">تحويل بنكي</option>
+          <option value="واتساب">واتساب</option>
+          <option value="تليجرام">تليجرام</option>
+          <option value="فودافون كاش">فودافون كاش</option>
+          <option value="بنك الكاش">بنك الكاش</option>
+          <option value="بطاقة ائتمان">بطاقة ائتمان</option>
+          <option value="أخرى">أخرى</option>
+        </select>
+      </div>
+
+      <div>
+        <label for="contact">وسيلة تواصل إضافية (رقم هاتف أو تيليجرام)</label>
+        <input type="text" id="contact" placeholder="اختياري لكن يُسرّع التواصل">
+      </div>
+
+      <div>
+        <label for="note">ملاحظة / تفاصيل إضافية</label>
+        <textarea id="note" rows="3" placeholder="ملاحظة للوكيل مثلا: أسرع تنفيذ، وقت مناسب..."></textarea>
+      </div>
+
+      <div class="flex-between">
+        <div class="small">سيُرسل الطلب إلى تليجرام: <strong>@1431088950</strong></div>
+        <div>
+          <button type="button" class="btn" id="sendBtn">أرسل الطلب عبر التليجرام</button>
+        </div>
+      </div>
+
+      <div class="notice" id="copyNotice" style="display:none">رابط الطلب جاهز — انسخه وأرسله يدوياً إذا لم يُفتح تليجرام تلقائياً.</div>
+
+    </form>
+
+    <footer>
+      <div>ملاحظة: الكمية مفتوحة — يحددها الزبون. تأكد من التأكيد بعد الدفع.</div>
+      <div style="margin-top:8px;color:#666;font-size:13px">تعليمات النشر: احفظ الملف باسم <code>index.html</code> وارفعه على GitHub Pages أو أي استضافة. تحتاج فقط لنطاق أو رابط GitHub Pages لعرضه رسمياً.</div>
+    </footer>
+  </div>
+
+  <script>
+    const telegramTarget = '1431088950';
+
+    function buildMessage(data){
+      const lines = [];
+      lines.push('طلب شحن - Hiay Chat');
+      lines.push('-------------------------');
+      lines.push('آيدي الحساب: ' + data.accountId);
+      lines.push('الكمية: ' + data.amount + (data.currency ? ' ' + data.currency : ''));
+      lines.push('طريقة الدفع: ' + data.payment);
+      if(data.contact) lines.push('وسيلة تواصل: ' + data.contact);
+      if(data.note) lines.push('ملاحظة: ' + data.note);
+      lines.push('وقت الطلب: ' + new Date().toLocaleString('ar-EG'));
+      return lines.join('\n');
+    }
+
+    document.getElementById('sendBtn').addEventListener('click', function(){
+      const accountId = document.getElementById('accountId').value.trim();
+      const amount = document.getElementById('amount').value.trim();
+      const currency = document.getElementById('currency').value.trim();
+      const payment = document.getElementById('payment').value;
+      const contact = document.getElementById('contact').value.trim();
+      const note = document.getElementById('note').value.trim();
+
+      if(!accountId){alert('رجاءً أدخل آيدي الحساب.');return}
+      if(!amount || isNaN(Number(amount.replace(/,/g,'')))){if(!confirm('الكمية تبدو غير رقمية. تري تستمر؟')) return}
+
+      const msg = buildMessage({accountId,amount,currency,payment,contact,note});
+      const encoded = encodeURIComponent(msg);
+      const webUrl = `https://t.me/${telegramTarget}?text=${encoded}`;
+      const win = window.open(webUrl, '_blank');
+      if(!win){
+        document.getElementById('copyNotice').style.display = 'block';
+        navigator.clipboard && navigator.clipboard.writeText(webUrl);
+      } else {
+        setTimeout(()=>{
+          document.getElementById('copyNotice').style.display = 'block';
+          document.getElementById('copyNotice').textContent = 'إذا لم يصل الطلب، انسخ هذا الرابط وأرسله يدوياً: ' + webUrl;
+        },1200);
+      }
+    });
+  </script>
+</body>
+</html>
